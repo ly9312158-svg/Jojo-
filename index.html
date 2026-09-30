@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>رسالة ليكي 💬</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#ffd9a0;--bg2:#ffb199;--bg3:#8ecbe6;--bubble:#3a2a55;--me:#ff5470;--ink:#3a2a44;--sub:#7a6478;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0}
+body{font-family:"Baloo Bhaijaan 2",Tahoma,sans-serif;color:var(--ink);overflow:hidden;position:relative;
+  background:linear-gradient(180deg,#8ecbe6 0%,#bcdcec 22%,#ffd9c2 55%,#ffb199 78%,#ff9a76 100%)}
+.sun{position:fixed;left:50%;top:16%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;z-index:0;
+  background:radial-gradient(circle,#fff6d8,#ffd36e 60%,#ffb84d 100%);box-shadow:0 0 70px 24px rgba(255,214,110,.55)}
+.cloud{position:fixed;z-index:0;opacity:.9}
+.cloud svg{display:block}
+h1,p{margin:0}
+#sp{position:fixed;inset:0;pointer-events:none;z-index:0}
+#sp i{position:absolute;border-radius:50%;background:#fff;opacity:.6;animation:drift 22s linear infinite}
+@keyframes drift{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+.screen{position:absolute;z-index:1;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.1rem;padding:2rem 1.2rem;text-align:center;overflow-y:auto}
+.screen.on{display:flex;animation:fade .6s}
+@keyframes fade{from{opacity:0}}
+
+/* lock screen */
+#lock{justify-content:space-between;padding:3.4rem 1.2rem 2.4rem}
+.clock{font-size:4.2rem;font-weight:800;letter-spacing:.05em;color:#3a2a44;text-shadow:0 2px 6px rgba(255,255,255,.5)}
+.date{font-size:1.05rem;color:#5a4658;text-shadow:0 1px 2px rgba(255,255,255,.4)}
+.notif{width:min(100%,23rem);box-sizing:border-box;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.7);
+  border-radius:20px;padding:1rem 1.1rem;display:flex;align-items:center;gap:.8rem;text-align:start;cursor:pointer;
+  animation:pulse 1.8s ease-in-out infinite;backdrop-filter:blur(6px)}
+@keyframes pulse{50%{transform:scale(1.03)}}
+.notif .ic{width:40px;height:40px;border-radius:11px;background:linear-gradient(160deg,#ff5470,#ff8a5b);display:flex;
+  align-items:center;justify-content:center;font-size:1.3rem;flex:none}
+.notif .t{flex:1}
+.notif .t b{display:block;font-size:1rem}
+.notif .t span{font-size:.9rem;color:var(--sub)}
+.notif .t b{color:#3a2a44}
+.hint{font-size:.9rem;color:#5a4658}
+.swipe{width:60px;height:5px;border-radius:3px;background:rgba(58,42,68,.25)}
+
+/* chat screen */
+#chat{justify-content:flex-end;padding:3.6rem 1rem 1.6rem;gap:.55rem}
+.hdr{position:fixed;top:0;left:0;right:0;padding-top:calc(1rem + env(safe-area-inset-top,0px));padding-bottom:.8rem;
+  text-align:center;background:linear-gradient(180deg,rgba(255,201,164,.95),rgba(255,201,164,0));z-index:2}
+.hdr b{font-size:1.05rem;color:#3a2a44}
+.hdr span{display:block;font-size:.8rem;color:#5a4658}
+.bubble{max-width:78%;padding:.7rem 1.05rem;border-radius:18px;font-size:1.05rem;line-height:1.7;font-weight:600;
+  opacity:0;transform:translateY(10px) scale(.96);transition:opacity .45s,transform .45s;align-self:flex-start;color:#fff;
+  background:var(--bubble);border:1px solid rgba(255,255,255,.1);box-shadow:0 4px 10px rgba(58,20,10,.18);border-bottom-right-radius:4px}
+.bubble.in{opacity:1;transform:none}
+.bubble.big{font-size:1.3rem;background:linear-gradient(160deg,#ff4d4d,#e0263f);border-bottom-right-radius:4px}
+.typing{align-self:flex-start;display:flex;gap:4px;padding:.7rem 1rem;border-radius:16px;background:var(--bubble);
+  border-bottom-right-radius:4px;opacity:0;transition:opacity .3s}
+.typing.in{opacity:1}
+.typing i{width:7px;height:7px;border-radius:50%;background:#cbb8d6;animation:bounce 1s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.endnote{font-size:.95rem;color:#5a4658;margin-top:.6rem;opacity:0;transition:opacity 1s}
+.endnote.in{opacity:1}
+:focus-visible{outline:3px solid #7c5cff;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="sun" aria-hidden="true"></div>
+<div id="sp" aria-hidden="true"></div>
+
+<section class="screen on" id="lock">
+  <div>
+    <p class="clock" id="clk">--:--</p>
+    <p class="date" id="dt"></p>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:1rem">
+    <button class="notif" id="openNotif">
+      <span class="ic">☀️</span>
+      <span class="t"><b>يويو</b><span>وصلتلك رسالة الآن</span></span>
+    </button>
+    <p class="hint">دوسي عشان تفتحيها</p>
+  </div>
+  <div class="swipe" aria-hidden="true"></div>
+</section>
+
+<section class="screen" id="chat">
+  <div class="hdr"><b>يويو</b><span>الآن</span></div>
+  <div class="bubble" id="c1">صباح الخير يا جوجو ☀️</div>
+  <div class="typing" id="tp1"><i></i><i></i><i></i></div>
+  <div class="bubble" id="c3">أول حاجة عملتها وصحيت إني فتحت الموبايل عشان أبعتلك الرسالة دي، عشان تكوني أول حاجة تشوفيها النهارده</div>
+  <div class="typing" id="tp2"><i></i><i></i><i></i></div>
+  <div class="bubble" id="c4">عايزك تعرفي إنك أول حاجة في بالي كل يوم وانا صاحي، ومهما الدنيا زحمة برضه بفكر فيكي</div>
+  <div class="bubble" id="c6">يومك النهارده هيبقى حلو زيك بالظبط، وأنا هفضل معاكي طول اليوم في بالي حتى لو مش قدامك</div>
+  <div class="bubble big" id="c5">بحبك يا جوجو ❤️</div>
+  <p class="endnote" id="note">حبيبك يويوو❤️</p>
+</section>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on',s.id===id)})}
+  var cloudSvg='<svg viewBox="0 0 120 60" width="100%"><path d="M20 45c-11 0-18-9-14-19 3-8 12-11 18-7 3-9 14-14 23-9 6-9 21-9 26 1 10-2 19 5 18 14 0 6-6 11-13 11Z" fill="#fff"/></svg>';
+  var clouds=[[10,'12%',150],[62,'26%',110],[-8,'42%',190],[70,'8%',130]];
+  clouds.forEach(function(c,i){
+    var d=document.createElement('div'); d.className='cloud';
+    d.style.cssText='left:'+c[0]+'%;top:'+c[1]+';width:'+c[2]+'px;animation:drift '+(24+i*6)+'s ease-in-out infinite alternate';
+    d.innerHTML=cloudSvg; document.body.insertBefore(d,$('sp'));
+  });
+  var st=$('sp'),i,d,z;
+  for(i=0;i<26;i++){d=document.createElement('i');z=2+Math.random()*3;
+    d.style.cssText='left:'+Math.random()*100+'%;top:'+(40+Math.random()*55)+'%;width:'+z+'px;height:'+z+'px;animation-delay:'+(Math.random()*4)+'s';
+    st.appendChild(d);}
+
+  function pad(n){return n<10?'0'+n:n}
+  var months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+      days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  function tick(){
+    var n=new Date();
+    $('clk').textContent=pad(n.getHours())+':'+pad(n.getMinutes());
+    $('dt').textContent=days[n.getDay()]+'، '+n.getDate()+' '+months[n.getMonth()];
+  }
+  tick(); setInterval(tick,15000);
+
+  $('openNotif').onclick=function(){
+    show('chat');
+    var seq=[['c1',700],['tp1',2000],['c3',3600,'tp1'],['tp2',6600],['c4',8300,'tp2'],['c6',10600],['c5',12600],['note',14100]];
+    seq.forEach(function(item){
+      setTimeout(function(){
+        if(item[2]){ $(item[2]).classList.remove('in'); }
+        $(item[0]).classList.add('in');
+        var box=$('chat'); box.scrollTo({top:box.scrollHeight,behavior:'smooth'});
+      },item[1]);
+    });
+  };
+})();
+</script>
+</body>
+</html>
